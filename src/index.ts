@@ -14,11 +14,12 @@ export interface BaseProduct {
   inStock: boolean;
 }
 
-// Variant 1: Електроніка та гаджети
+// Variant 2: Книжковий онлайн-магазин
 export interface Product extends BaseProduct {
-  warrantyMonths: number;
-  powerWatts?: number;
-  specs: [cpu: string, ramGb: number];
+  isbn: string;
+  pageCount: number;
+  coverType: 'hard' | 'soft';
+  author: string;
 }
 
 // 3. Базові функції обробки каталогу
@@ -48,7 +49,7 @@ export function calculateLineTotal(price: number, quantity: number, discountPerc
 
 // 1. Моделювання життєвого циклу замовлення
 export type OrderStatus = 'pending' | 'processing' | 'shipped' | 'delivered' | 'cancelled';
-export type DeliveryMethod = 'courier' | 'post_locker' | 'store_pickup'; // Variant 1
+export type DeliveryMethod = 'post_service' | 'courier' | 'ebook_download'; // Variant 2
 
 export interface CartItem {
   product: Product;
@@ -154,33 +155,37 @@ function main() {
   console.log('=== СИСТЕМА ОБРОБКИ ЗАМОВЛЕНЬ (E-COMMERCE CORE) ===\n');
 
   console.log('[Каталог товарів]');
-  const laptop = createProduct({
+  const book1 = createProduct({
     id: 1,
-    title: 'Ноутбук Pro 16',
-    price: 45000,
-    tags: ['laptop', 'pro'],
+    title: 'TypeScript Design Patterns',
+    price: 850,
+    tags: ['programming', 'typescript', 'hardcover'],
     inStock: true,
-    warrantyMonths: 24,
-    specs: ['M3 Max', 36]
+    isbn: '978-1-59327-956-1',
+    pageCount: 350,
+    coverType: 'hard',
+    author: 'Viljami Kuosmanen'
   });
-  console.log(`- Створено товар #${laptop.id}: [${laptop.title}] - ${laptop.price} грн (В наявності: ${laptop.inStock ? 'так' : 'ні'})`);
-  console.log(`  Специфікації: CPU: ${laptop.specs[0]}, RAM: ${laptop.specs[1]}GB, Гарантія: ${laptop.warrantyMonths} міс.`);
+  console.log(`- Створено товар #${book1.id}: [${book1.title}] - ${book1.price} грн (В наявності: ${book1.inStock ? 'так' : 'ні'})`);
+  console.log(`  Специфікації: Автор: ${book1.author}, Сторінок: ${book1.pageCount}, Обкладинка: ${book1.coverType}, ISBN: ${book1.isbn}`);
 
-  const mouse = createProduct({
+  const book2 = createProduct({
     id: 2,
-    title: 'Бездротова миша',
-    price: 1200,
-    tags: ['accessories', 'wireless'],
+    title: 'Clean Code',
+    price: 920,
+    tags: ['programming', 'best-practices', 'softcover'],
     inStock: true,
-    warrantyMonths: 12,
-    specs: ['Optical', 0]
+    isbn: '978-0-13-235088-4',
+    pageCount: 464,
+    coverType: 'soft',
+    author: 'Robert C. Martin'
   });
-  console.log(`- Створено товар #${mouse.id}: [${mouse.title}] - ${mouse.price} грн (В наявності: ${mouse.inStock ? 'так' : 'ні'})\n`);
+  console.log(`- Створено товар #${book2.id}: [${book2.title}] - ${book2.price} грн (В наявності: ${book2.inStock ? 'так' : 'ні'})\n`);
 
   console.log('[Формування кошика]');
   const cart: CartItem[] = [
-    { product: laptop, quantity: 1 },
-    { product: mouse, quantity: 2 }
+    { product: book1, quantity: 1 },
+    { product: book2, quantity: 2 }
   ];
   
   let totalOrderAmount = 0;
@@ -197,7 +202,7 @@ function main() {
     customerEmail: validateCustomerInput('customer@example.com'),
     items: cart,
     status: 'pending',
-    delivery: 'courier',
+    delivery: 'post_service',
     createdAt: new Date('2026-09-09T18:30:00.000Z'),
     updatedAt: new Date('2026-09-09T18:30:00.000Z')
   };
